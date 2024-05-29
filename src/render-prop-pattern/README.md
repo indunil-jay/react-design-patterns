@@ -53,7 +53,167 @@ const Example1 = () => {
 export default Example1;
 ```
 
-#### Example-02
+#### Example-02 (with statefull logic)
+
+```javascript
+import { useState } from "react";
+
+type TFormHandler = {
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void,
+  error: Record<string, string>,
+};
+
+type TFormData = {
+  name: string,
+  email: string,
+  password: string,
+};
+
+interface Props {
+  render: (formObj: TFormHandler) => React.ReactNode;
+}
+
+const FormHandler = ({ render }: Props) => {
+  const [formData, setFormData] =
+    useState <
+    TFormData >
+    {
+      name: "",
+      email: "",
+      password: "",
+    };
+  const [error, setError] = useState({});
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.name) {
+      newErrors.name = "First name is required";
+    }
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    }
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setError(newErrors);
+    } else {
+      setError({});
+      // Handle form submission
+      console.log("Form submitted successfully", formData);
+    }
+  };
+
+  return render({ handleChange, handleSubmit, error });
+};
+
+export default FormHandler;
+```
+
+```javascript
+import FormHandler from "./FormHandler";
+
+const SignInForm = () => {
+  return (
+    <div>
+      <h1>SignIn Form</h1>
+
+      <FormHandler
+        render={({ handleChange, handleSubmit, error }) => (
+          <form onSubmit={handleSubmit}>
+            <div>
+              <label htmlFor="email">Email</label>
+              <input
+                type="email"
+                id="email2"
+                placeholder="Enter your email"
+                onChange={handleChange}
+              />
+              {error.email && <p style={{ color: "red" }}>{error.email}</p>}
+            </div>
+            <div>
+              <label htmlFor="password">Password</label>
+              <input
+                type="password"
+                id="password2"
+                placeholder="Enter a password"
+                onChange={handleChange}
+              />
+              {error.password && (
+                <p style={{ color: "red" }}>{error.password}</p>
+              )}
+            </div>
+            <button type="submit">Submit</button>
+          </form>
+        )}
+      />
+    </div>
+  );
+};
+
+export default SignInForm;
+```
+
+```javascript
+import FormHandler from "./FormHandler";
+
+const SignupForm = () => {
+  return (
+    <div>
+      <h1>Signup Form</h1>
+      <FormHandler
+        render={({ handleChange, handleSubmit, error }) => (
+          <form onSubmit={handleSubmit}>
+            <div>
+              <label htmlFor="name">First Name</label>
+              <input
+                type="text"
+                id="name"
+                placeholder="Enter your first name"
+                onChange={handleChange}
+              />
+              {error.name && <p style={{ color: "red" }}>{error.name}</p>}
+            </div>
+            <div>
+              <label htmlFor="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                placeholder="Enter your email"
+                onChange={handleChange}
+              />
+              {error.email && <p style={{ color: "red" }}>{error.email}</p>}
+            </div>
+            <div>
+              <label htmlFor="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                placeholder="Enter a password"
+                onChange={handleChange}
+              />
+              {error.password && (
+                <p style={{ color: "red" }}>{error.password}</p>
+              )}
+            </div>
+            <button type="submit">Submit</button>
+          </form>
+        )}
+      />
+    </div>
+  );
+};
+
+export default SignupForm;
+```
 
 ### Pros:
 
